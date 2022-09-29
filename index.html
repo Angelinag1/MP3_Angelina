@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=!, initial-scale=1.0">
+    <title>Player music</title>
+    <link rel="stylesheet" href="./style/style.css">
+</head>
+<body>
+    <h1 id = "title"></h1>
+    <h2 id="author" ></h2>
+    <audio id="player"></audio>
+    <button type="button" onclick="onPrev()"><img src="./images/precedent.png" alt=""></button>
+    <button type="button" onclick="onPlay()"> <img src="./images/jouer.png" alt=""></button>
+    <button type="button" onclick="onPause()"> <img src="./images/pause.png" alt=""> </button>
+    <button type="button" onclick="onNext()"> <img src="./images/suivant.png" alt=""> </button>
+    <p id="currentTime"></p>
+    <div class="duration"><input class = "slider" id="position" type="range" min="0" max="100" onchange="onPosition(this.value)"></div>
+    
+    <p id="durationTime"></p>
+    <div class="duration">
+        <input class = "slider" id="volume" type="range" min="0" max="100" onchange="onVolume(this.value)">
+    </div>
+
+    <script>
+        var playlist = [{
+            "title" : "More than words",
+            "author" : "Extreme",
+            "source" : "./musics/Morethanwords.mp3"
+        },
+        {
+            "title" : "Pass The Dutchie",
+            "author" : "Musical Youth",
+            "source" : "./musics/pass-the-dutchie.mp3"
+        },
+        {
+            "title" : "Any Man Of Mine",
+            "author" : "Shania Twain",
+            "source" : "./musics/any-man-of-mine.mp3"
+        }];
+
+        var title = document.getElementById('title');
+        var author = document.getElementById('author');
+        var player =  document.getElementById('player');
+        var volume = document.getElementById('volume');
+        var position = document.getElementById('position');
+        var currentTime = document.getElementById('currentTime');
+        var durationTiime = document.getElementById('durationTime');
+
+        player.src = playlist[0].source;
+        player.volume =volume.value / 100;
+        position.value = player.currentTime;
+        title.innerText = playlist[0].title;
+        author.innerText = playlist[0].author;
+
+        console.log (player.src)
+
+        setInterval(function () {
+            position.value = player.currentTime * (100 / player.duration);
+
+            var currentMinutes = Math.floor(player.currentTime / 60); 
+            var currentSeconds = Math.floor(player.currentTime - currentMinutes * 60); 
+            var durationMinutes = Math.floor(player.duration / 60); 
+            var durationSeconds = Math.floor(player.duration - durationMinutes * 60); 
+
+            if (currentSeconds < 10) currentSeconds = "0" + currentSeconds; 
+            if (durationSeconds < 10) durationSeconds = "0" + durationSeconds;
+            if (currentMinutes < 10) currentMinutes = "0" + currentMinutes;
+            if (durationMinutes < 10) durationMinutes = "0" + durationMinutes;
+
+            currentTime.innerText = currentMinutes + ":" + currentSeconds;
+            durationTime.innerText = durationMinutes + ":" + durationSeconds;
+        }, 1000);
+        function onPlay() {
+            player.play();
+        }
+
+        function onPause () {
+            player.pause();
+        }
+
+        function onPrev() {
+            var currentIndex = playlist.findIndex(function(item) {                                   
+                if(player.src.search(item.source) != -1) return true;
+                else return false;
+            });
+
+            if (currentIndex == 0) {
+                var song = playlist[playlist.length-1];
+            } else {
+                var song = playlist[--currentIndex];
+            }
+
+            player.src = song.source;
+            title.innerText = song.title;
+            author.innerText = song.author;
+
+            player.play();
+        }
+
+        function onNext() {
+            var currentIndex = playlist.findIndex(function(item) {
+                if(player.src.search(item.source) != -1) return true;
+                else return false;
+            });
+            if (currentIndex == playlist.length-1) {
+                var song = playlist[0];
+            } else {
+                var song = playlist[++currentIndex];
+            }
+
+            player.src = song.source;
+            title.innerText = song.title;
+            author.innerText = song.author;
+
+            player.play();
+        }
+        function onPosition(value) {
+            var currentTime = player.duration * (value / 100);
+            player.currentTime = currentTime;
+        }
+        
+        function onVolume(value) {
+            player.volume = value / 100;
+        }
+    </script>
+</body>
+</html>
